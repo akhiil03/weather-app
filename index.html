@@ -13,7 +13,7 @@
   <title>Weather — Mumbai</title>
   <style>
     :root {
-      color-scheme: light dark;
+      color-scheme: light;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       font-synthesis: none;
       text-rendering: optimizeLegibility;
@@ -26,6 +26,7 @@
       --accent: #eea844;
       --accent-dark: #b97618;
       --accent-soft: #fff2dc;
+      --sky-glow: rgba(255, 232, 188, .55);
       --shadow: 0 24px 70px rgba(35, 56, 91, .09), 0 3px 10px rgba(35, 56, 91, .04);
     }
 
@@ -39,10 +40,28 @@
       padding: 44px 20px 36px;
       color: var(--text);
       background:
-        radial-gradient(ellipse at 18% 5%, color-mix(in srgb, var(--accent-soft) 76%, transparent), transparent 34rem),
+        radial-gradient(ellipse at 18% 5%, var(--sky-glow), transparent 34rem),
         var(--page);
       font-size: 15px;
-      transition: background-color .3s ease;
+      transition: background .8s ease, color .8s ease;
+    }
+
+    body[data-period="night"] {
+      color-scheme: dark;
+      --page: #101827;
+      --surface: rgba(30, 42, 61, .9);
+      --surface-solid: #1b2738;
+      --text: #eef3fc;
+      --muted: #9daec3;
+      --line: #34445d;
+      --accent: #f3c178;
+      --accent-dark: #f7cc87;
+      --accent-soft: #3b3040;
+      --sky-glow: rgba(86, 100, 174, .24);
+      --shadow: 0 24px 70px rgba(0, 0, 0, .3), 0 3px 10px rgba(0, 0, 0, .2);
+      background:
+        radial-gradient(ellipse at 18% 5%, var(--sky-glow), transparent 34rem),
+        var(--page);
     }
 
     body[data-weather="rain"] {
@@ -65,6 +84,10 @@
       --accent-dark: #7060a5;
       --accent-soft: #f0ecfc;
     }
+    body[data-period="night"][data-weather="rain"] { --accent: #9db5f5; --accent-dark: #b2c5ff; --accent-soft: #26324c; }
+    body[data-period="night"][data-weather="cloud"] { --accent: #aec2d2; --accent-dark: #c0d2df; --accent-soft: #293a49; }
+    body[data-period="night"][data-weather="snow"] { --accent: #a0d7e4; --accent-dark: #b6e3ec; --accent-soft: #213b45; }
+    body[data-period="night"][data-weather="storm"] { --accent: #c0aff5; --accent-dark: #d0c2fa; --accent-soft: #332c4a; }
 
     button, input { font: inherit; }
 
@@ -77,6 +100,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 10px;
       margin-bottom: 26px;
       animation: rise-in .55s both;
     }
@@ -105,6 +129,33 @@
       color: var(--muted);
       font-size: 13px;
       font-weight: 550;
+      transition: color .8s ease;
+    }
+
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      min-height: 30px;
+      margin-left: auto;
+      padding: 0 9px;
+      border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--line));
+      border-radius: 999px;
+      color: var(--accent-dark);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+      transition: color .6s ease, background .6s ease, border-color .6s ease, transform .2s ease;
+    }
+    .theme-toggle:hover { transform: translateY(-1px); }
+    .theme-toggle:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 55%, white); outline-offset: 2px; }
+    .theme-toggle-icon { font-size: 14px; line-height: 1; }
+    .theme-toggle-mode { min-width: 25px; }
+
+    .brand-mark, .search, .search button, .current-card, .details, .day-card {
+      transition: background .8s ease, border-color .8s ease, color .8s ease, box-shadow .8s ease;
     }
 
     .install-button {
@@ -412,7 +463,7 @@
       }
     }
 
-    @media (max-width: 370px) {
+    @media (max-width: 400px) {
       body {
         padding:
           calc(18px + env(safe-area-inset-top, 0px))
@@ -429,33 +480,18 @@
       .detail { gap: 5px; }
     }
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --page: #111827;
-        --surface: rgba(31, 42, 59, .86);
-        --surface-solid: #1d2939;
-        --text: #edf3fc;
-        --muted: #a1aec0;
-        --line: #334155;
-        --accent: #f2b85f;
-        --accent-dark: #f3bf6f;
-        --accent-soft: #3d3427;
-        --shadow: 0 24px 70px rgba(0, 0, 0, .24), 0 3px 10px rgba(0, 0, 0, .14);
-      }
-      body[data-weather="rain"] { --accent: #90aaf0; --accent-dark: #a9bcf6; --accent-soft: #242f4b; }
-      body[data-weather="cloud"] { --accent: #a6bdcf; --accent-dark: #b7ccdc; --accent-soft: #273746; }
-      body[data-weather="snow"] { --accent: #91d0df; --accent-dark: #a6dce8; --accent-soft: #203b42; }
-      body[data-weather="storm"] { --accent: #b5a2ef; --accent-dark: #c4b5f4; --accent-soft: #302b46; }
-      .search { border-color: var(--line); }
-      .search button { color: #17243b; background: #edf3fc; }
-      .search button:hover { background: #d8e2f0; }
-      .current-card {
-        border-color: rgba(255,255,255,.04);
-        background: linear-gradient(125deg, color-mix(in srgb, var(--accent-soft) 88%, var(--surface-solid)), var(--surface-solid) 90%);
-      }
-      .current-card::after { border-color: color-mix(in srgb, var(--accent) 16%, transparent); }
-      .footer { color: #8997aa; }
+    body[data-period="night"] .current-card {
+      border-color: rgba(255,255,255,.06);
+      background: linear-gradient(125deg, color-mix(in srgb, var(--accent-soft) 88%, var(--surface-solid)), var(--surface-solid) 90%);
     }
+    body[data-period="night"] .current-card::after {
+      border-color: color-mix(in srgb, var(--accent) 16%, transparent);
+      box-shadow: 0 0 0 24px color-mix(in srgb, var(--accent) 6%, transparent), 0 0 0 52px color-mix(in srgb, var(--accent) 4%, transparent);
+    }
+    body[data-period="night"] .search { border-color: var(--line); }
+    body[data-period="night"] .search button { color: #17243b; background: #edf3fc; }
+    body[data-period="night"] .search button:hover { background: #d8e2f0; }
+    body[data-period="night"] .footer { color: #8997aa; }
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
@@ -466,11 +502,15 @@
     }
   </style>
 </head>
-<body data-weather="sun">
+<body data-weather="sun" data-period="day">
   <main class="app">
     <header class="topbar">
       <div class="brand"><span class="brand-mark" aria-hidden="true">◉</span><span>daylight</span></div>
       <span class="today-label" id="today-label"></span>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Theme mode: auto. Activate to switch day and night themes.">
+        <span class="theme-toggle-icon" id="theme-toggle-icon" aria-hidden="true">◉</span>
+        <span class="theme-toggle-mode" id="theme-toggle-mode">Auto</span>
+      </button>
       <button class="install-button" id="install-button" type="button" aria-label="Install or add this weather app to your home screen"><span aria-hidden="true">↓</span>Install</button>
     </header>
 
@@ -523,8 +563,17 @@
     "use strict";
 
     const DEFAULT_CITY = { name: "Mumbai", country: "India", latitude: 19.0760, longitude: 72.8777, timezone: "Asia/Kolkata" };
+    function isDayAtTimezone(timezone) {
+      const hour = Number(new Intl.DateTimeFormat("en-GB", {
+        hour: "2-digit",
+        hourCycle: "h23",
+        timeZone: timezone || "UTC"
+      }).format(new Date()));
+      return hour >= 6 && hour < 18;
+    }
+
     const fallback = {
-      current: { temperature_2m: 30, apparent_temperature: 33, relative_humidity_2m: 68, wind_speed_10m: 13, weather_code: 1, is_day: new Date().getHours() >= 6 && new Date().getHours() < 18 ? 1 : 0, uv_index: 7 },
+      current: { temperature_2m: 30, apparent_temperature: 33, relative_humidity_2m: 68, wind_speed_10m: 13, weather_code: 1, is_day: isDayAtTimezone(DEFAULT_CITY.timezone) ? 1 : 0, uv_index: 7 },
       daily: {
         time: Array.from({ length: 5 }, (_, offset) => {
           const date = new Date();
@@ -536,7 +585,52 @@
     };
 
     const $ = (id) => document.getElementById(id);
+    let activePlace = DEFAULT_CITY;
+    let themeMode = "auto";
+    let isDaylight = fallback.current.is_day === 1;
     let pendingInstallPrompt = null;
+
+    function applyTheme(isDay) {
+      isDaylight = isDay;
+      const isNight = themeMode === "night" || (themeMode === "auto" && !isDaylight);
+      const period = isNight ? "night" : "day";
+      const icon = isNight ? "☾" : "☀";
+      document.body.dataset.period = period;
+      $("theme-toggle-icon").textContent = icon;
+      $("theme-toggle-mode").textContent = themeMode === "auto" ? "Auto" : themeMode === "day" ? "Day" : "Night";
+      $("theme-toggle").setAttribute("aria-label", `Theme mode: ${themeMode}. Activate to switch day and night themes.`);
+      $("theme-toggle").title = `Theme: ${themeMode}. Tap to change.`;
+      document.querySelector('meta[name="theme-color"]').content = isNight ? "#101827" : "#f4f7fb";
+    }
+
+    $("theme-toggle").addEventListener("click", () => {
+      themeMode = themeMode === "auto" ? "day" : themeMode === "day" ? "night" : "auto";
+      applyTheme(isDaylight);
+    });
+
+    async function refreshDaylight() {
+      if (themeMode !== "auto" || document.visibilityState === "hidden") return;
+      const place = activePlace;
+      const params = new URLSearchParams({
+        latitude: place.latitude,
+        longitude: place.longitude,
+        current: "is_day",
+        timezone: place.timezone || "auto"
+      });
+      try {
+        const response = await fetch(`https://api.open-meteo.com/v1/forecast?${params}`);
+        if (!response.ok) throw new Error(`Weather service returned ${response.status}.`);
+        const data = await response.json();
+        if (data.current?.is_day !== 0 && data.current?.is_day !== 1) throw new Error("Weather service returned an invalid day/night status.");
+        if (place !== activePlace || themeMode !== "auto") return;
+        applyTheme(data.current.is_day === 1);
+      } catch (error) {
+        console.warn("Could not refresh the day/night theme:", error);
+      }
+    }
+
+    window.setInterval(refreshDaylight, 15 * 60 * 1000);
+    document.addEventListener("visibilitychange", refreshDaylight);
 
     function showInstallMessage(text) {
       $("message").className = "message";
@@ -602,6 +696,7 @@
       const current = data.current;
       const info = weatherInfo(current.weather_code, current.is_day !== 0);
       document.body.dataset.weather = info.theme;
+      applyTheme(current.is_day === 1);
       $("location").textContent = [place.name, place.country].filter(Boolean).join(", ");
       $("temperature").innerHTML = `${Math.round(current.temperature_2m)}<sup>°</sup>`;
       $("condition").textContent = info.label;
@@ -651,6 +746,7 @@
 
     async function load(place, isInitial = false) {
       const card = $("current-card");
+      activePlace = place;
       card.classList.add("loading");
       $("message").className = "message";
       $("message").textContent = isInitial ? "Finding today's weather..." : "Finding your forecast...";
@@ -659,7 +755,11 @@
         render(data, place, false);
         $("message").textContent = "";
       } catch (error) {
-        render(fallback, place, true);
+        const offlineData = {
+          current: { ...fallback.current, is_day: isDayAtTimezone(place.timezone) ? 1 : 0 },
+          daily: fallback.daily
+        };
+        render(offlineData, place, true);
         $("message").textContent = `Live weather unavailable — showing a sample forecast.`;
         $("message").className = "message";
         console.warn("Could not load live weather:", error);
