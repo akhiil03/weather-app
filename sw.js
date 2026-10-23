@@ -1,6 +1,6 @@
 "use strict";
 
-const CACHE_NAME = "daylight-weather-v1";
+const CACHE_NAME = "daylight-weather-v2";
 const APP_SHELL = [
   "./",
   "./index.html",
