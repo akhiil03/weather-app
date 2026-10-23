@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - akhiil03-daily-ai-launches-a24
   workflow_dispatch:
 
 permissions:
