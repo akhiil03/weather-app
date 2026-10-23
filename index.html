@@ -276,6 +276,69 @@
     }
     .location-pin { color: var(--accent-dark); }
 
+    .solar-line {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      padding: 6px 10px;
+      border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--line));
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--accent-soft) 72%, rgba(255,255,255,.3));
+      color: var(--accent-dark);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .solar-badge { font-size: 12px; }
+
+    .solar-system {
+      position: absolute;
+      right: 18px;
+      bottom: 18px;
+      z-index: 0;
+      width: 132px;
+      height: 132px;
+      opacity: .9;
+      pointer-events: none;
+    }
+    .solar-system .orbit {
+      position: absolute;
+      inset: 12px;
+      border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+      border-radius: 50%;
+      transform: rotate(-18deg);
+    }
+    .solar-system .orbit.orbit-two {
+      inset: 21px 19px 19px 21px;
+      border-style: dashed;
+      opacity: .7;
+    }
+    .solar-system .planet {
+      position: absolute;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      font-size: 9px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.2);
+    }
+    .solar-system .sun {
+      top: 42px;
+      left: 42px;
+      width: 22px;
+      height: 22px;
+      color: #f7d87a;
+      background: radial-gradient(circle at 30% 30%, #ffe9a7, var(--accent) 60%, #d9881a 100%);
+      box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 40%, transparent);
+    }
+    .solar-system .mercury { top: 18px; left: 70px; width: 8px; height: 8px; background: #d7c7b6; }
+    .solar-system .venus { right: 18px; top: 54px; width: 10px; height: 10px; background: #e7b45d; }
+    .solar-system .earth { left: 24px; bottom: 14px; width: 11px; height: 11px; background: #61a8ff; }
+    .solar-system .mars { right: 30px; bottom: 34px; width: 9px; height: 9px; background: #d66f4b; }
+
     .current-main {
       position: relative;
       z-index: 1;
@@ -524,6 +587,16 @@
 
     <section class="current-card" id="current-card" aria-label="Current weather">
       <div class="location-row"><span class="location-pin" aria-hidden="true">●</span><span id="location">Mumbai, India</span></div>
+      <div class="solar-line"><span class="solar-badge" aria-hidden="true">✦</span><span>Our Solar System</span></div>
+      <div class="solar-system" aria-hidden="true">
+        <span class="orbit"></span>
+        <span class="orbit orbit-two"></span>
+        <span class="planet sun"></span>
+        <span class="planet mercury"></span>
+        <span class="planet venus"></span>
+        <span class="planet earth"></span>
+        <span class="planet mars"></span>
+      </div>
       <div class="current-main">
         <div class="temperature" id="temperature">--<sup>°</sup></div>
         <div class="weather-visual" id="weather-visual" aria-hidden="true">☀</div>
