@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f4f7fb">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23fff2dc'/%3E%3Ccircle cx='32' cy='32' r='11' fill='%23eea844'/%3E%3Cg stroke='%23b97618' stroke-width='4' stroke-linecap='round'%3E%3Cpath d='M32 8v7m0 34v7M8 32h7m34 0h7M15 15l5 5m24 24 5 5m0-34-5 5M20 44l-5 5'/%3E%3C/g%3E%3C/svg%3E">
-  <title>Weather — Tokyo</title>
+  <title>Weather — Mumbai</title>
   <style>
     :root {
       color-scheme: light dark;
@@ -384,7 +384,7 @@
     <p class="message" id="message" role="status" aria-live="polite"></p>
 
     <section class="current-card" id="current-card" aria-label="Current weather">
-      <div class="location-row"><span class="location-pin" aria-hidden="true">●</span><span id="location">Tokyo, Japan</span></div>
+      <div class="location-row"><span class="location-pin" aria-hidden="true">●</span><span id="location">Mumbai, India</span></div>
       <div class="current-main">
         <div class="temperature" id="temperature">--<sup>°</sup></div>
         <div class="weather-visual" id="weather-visual" aria-hidden="true">☀</div>
@@ -423,16 +423,16 @@
   <script>
     "use strict";
 
-    const TOKYO = { name: "Tokyo", country: "Japan", latitude: 35.6762, longitude: 139.6503, timezone: "Asia/Tokyo" };
+    const DEFAULT_CITY = { name: "Mumbai", country: "India", latitude: 19.0760, longitude: 72.8777, timezone: "Asia/Kolkata" };
     const fallback = {
-      current: { temperature_2m: 22, apparent_temperature: 23, relative_humidity_2m: 58, wind_speed_10m: 11, weather_code: 2, is_day: new Date().getHours() >= 6 && new Date().getHours() < 18 ? 1 : 0, uv_index: 4 },
+      current: { temperature_2m: 30, apparent_temperature: 33, relative_humidity_2m: 68, wind_speed_10m: 13, weather_code: 1, is_day: new Date().getHours() >= 6 && new Date().getHours() < 18 ? 1 : 0, uv_index: 7 },
       daily: {
         time: Array.from({ length: 5 }, (_, offset) => {
           const date = new Date();
           date.setDate(date.getDate() + offset);
           return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
         }),
-        weather_code: [2, 1, 3, 61, 2], temperature_2m_max: [24, 25, 22, 20, 23], temperature_2m_min: [17, 18, 17, 16, 17]
+        weather_code: [1, 0, 2, 2, 1], temperature_2m_max: [32, 33, 31, 30, 32], temperature_2m_min: [25, 25, 24, 24, 25]
       }
     };
 
@@ -559,8 +559,8 @@
     });
 
     $("today-label").textContent = new Intl.DateTimeFormat(undefined, { weekday: "long", month: "long", day: "numeric" }).format(new Date());
-    render(fallback, TOKYO, true);
-    load(TOKYO, true);
+    render(fallback, DEFAULT_CITY, true);
+    load(DEFAULT_CITY, true);
   </script>
 </body>
 </html>
