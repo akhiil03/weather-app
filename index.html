@@ -78,6 +78,7 @@
       align-items: center;
       justify-content: space-between;
       margin-bottom: 26px;
+      animation: rise-in .55s both;
     }
 
     .brand {
@@ -135,6 +136,7 @@
       border-radius: 17px;
       background: var(--surface-solid);
       box-shadow: 0 5px 18px rgba(37, 58, 88, .035);
+      animation: rise-in .55s .08s both;
     }
 
     .search-icon {
@@ -177,6 +179,7 @@
       margin: 9px 3px 2px;
       color: var(--muted);
       font-size: 12px;
+      animation: rise-in .45s .12s both;
     }
     .message.error { color: #bb5151; }
 
@@ -193,6 +196,7 @@
         radial-gradient(circle at 78% 24%, rgba(255,255,255,.4) 0 1px, transparent 2px),
         linear-gradient(125deg, color-mix(in srgb, var(--accent-soft) 86%, white), var(--surface-solid) 88%);
       box-shadow: var(--shadow);
+      animation: rise-in .7s .12s both;
     }
 
     .current-card::after {
@@ -206,6 +210,7 @@
       box-shadow: 0 0 0 24px color-mix(in srgb, var(--accent) 4%, transparent), 0 0 0 52px color-mix(in srgb, var(--accent) 3%, transparent);
       content: "";
       pointer-events: none;
+      animation: halo-breathe 7s ease-in-out infinite;
     }
 
     .location-row {
@@ -253,7 +258,13 @@
       filter: drop-shadow(0 9px 10px color-mix(in srgb, var(--accent) 23%, transparent));
       font-size: 76px;
       line-height: 1;
+      transform-origin: center;
+      animation: weather-drift 4s ease-in-out infinite;
     }
+    body[data-weather="sun"] .weather-visual { animation-name: weather-drift, sun-glow; animation-duration: 4s, 5s; animation-timing-function: ease-in-out, ease-in-out; animation-iteration-count: infinite, infinite; }
+    body[data-weather="rain"] .weather-visual { animation-name: weather-drift, rain-shift; animation-duration: 3.3s, 2.4s; animation-timing-function: ease-in-out, ease-in-out; animation-iteration-count: infinite, infinite; }
+    body[data-weather="snow"] .weather-visual { animation-name: weather-drift, snow-turn; animation-duration: 4s, 8s; animation-timing-function: ease-in-out, ease-in-out; animation-iteration-count: infinite, infinite; }
+    body[data-weather="storm"] .weather-visual { animation-name: weather-drift, storm-flash; animation-duration: 3.5s, 3.8s; animation-timing-function: ease-in-out, ease-in-out; animation-iteration-count: infinite, infinite; }
 
     .condition-row {
       position: relative;
@@ -278,6 +289,7 @@
       border: 1px solid var(--line);
       border-radius: 18px;
       background: var(--surface);
+      animation: rise-in .6s .24s both;
     }
 
     .detail {
@@ -298,6 +310,7 @@
       align-items: baseline;
       justify-content: space-between;
       margin: 27px 2px 13px;
+      animation: rise-in .55s .32s both;
     }
     .forecast-heading h2 {
       margin: 0;
@@ -323,7 +336,13 @@
       border-radius: 17px;
       background: var(--surface);
       transition: transform .2s ease, box-shadow .2s ease;
+      animation: rise-in .5s both;
     }
+    .day-card:nth-child(1) { animation-delay: .12s; }
+    .day-card:nth-child(2) { animation-delay: .19s; }
+    .day-card:nth-child(3) { animation-delay: .26s; }
+    .day-card:nth-child(4) { animation-delay: .33s; }
+    .day-card:nth-child(5) { animation-delay: .4s; }
     .day-card:hover { transform: translateY(-3px); box-shadow: 0 9px 18px rgba(37, 58, 88, .07); }
     .day-name { color: var(--muted); font-size: 11px; font-weight: 600; }
     .day-icon { margin: 11px 0 10px; font-size: 24px; line-height: 1; }
@@ -337,8 +356,40 @@
       margin-top: 17px;
       color: #99a4b3;
       font-size: 10px;
+      animation: rise-in .55s .55s both;
     }
     .footer strong { color: var(--accent-dark); font-weight: 650; }
+
+    @keyframes rise-in {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes weather-drift {
+      0%, 100% { transform: translateY(0) rotate(0); }
+      50% { transform: translateY(-7px) rotate(2deg); }
+    }
+    @keyframes sun-glow {
+      0%, 100% { filter: drop-shadow(0 8px 9px color-mix(in srgb, var(--accent) 18%, transparent)); }
+      50% { filter: drop-shadow(0 10px 15px color-mix(in srgb, var(--accent) 45%, transparent)); }
+    }
+    @keyframes rain-shift {
+      0%, 100% { rotate: -3deg; }
+      50% { rotate: 3deg; }
+    }
+    @keyframes snow-turn {
+      from { rotate: -12deg; }
+      to { rotate: 12deg; }
+    }
+    @keyframes storm-flash {
+      0%, 87%, 100% { opacity: 1; }
+      89% { opacity: .5; }
+      91% { opacity: 1; }
+      94% { opacity: .7; }
+    }
+    @keyframes halo-breathe {
+      0%, 100% { opacity: .65; transform: scale(.98); }
+      50% { opacity: 1; transform: scale(1.04); }
+    }
 
     .loading { opacity: .58; pointer-events: none; }
     .sr-only {
@@ -407,7 +458,11 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+        animation: none !important;
+      }
     }
   </style>
 </head>
