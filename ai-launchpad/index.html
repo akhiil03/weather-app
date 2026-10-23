@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f8fc">
+  <meta name="description" content="A fresh, curated directory of AI tools and launches.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Launchpad AI">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/launchpad.svg" type="image/svg+xml">
+  <title>Launchpad AI — Daily AI discoveries</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      --page: #f7f8fc;
+      --paper: #fff;
+      --ink: #172033;
+      --muted: #7d8495;
+      --line: #eaecf2;
+      --purple: #6558e8;
+      --purple-light: #f0efff;
+      --green: #24836b;
+      --shadow: 0 12px 36px rgba(36, 42, 71, .06);
+    }
+    * { box-sizing: border-box; }
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      min-height: 100dvh;
+      margin: 0;
+      color: var(--ink);
+      background: var(--page);
+      font-size: 14px;
+    }
+    button, input { font: inherit; }
+    button { color: inherit; }
+    a { color: inherit; text-decoration: none; }
+    .shell { width: min(1180px, 100%); min-height: 100vh; margin: auto; }
+    .sidebar {
+      position: fixed;
+      inset: 0 auto 0 max(calc((100vw - 1180px) / 2), 0px);
+      z-index: 5;
+      display: flex;
+      width: 228px;
+      flex-direction: column;
+      padding: 27px 18px 20px;
+      border-right: 1px solid var(--line);
+      background: var(--paper);
+    }
+    .brand { display: flex; align-items: center; gap: 10px; padding: 0 10px; font-size: 17px; font-weight: 800; letter-spacing: -.045em; }
+    .brand-icon { display: grid; width: 32px; height: 32px; place-items: center; border-radius: 11px; color: #fff; background: var(--purple); }
+    .brand-icon svg { width: 19px; height: 19px; }
+    .nav-label { margin: 35px 10px 10px; color: #a3a8b5; font-size: 10px; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; }
+    .nav-list { display: grid; gap: 5px; }
+    .nav-item {
+      display: flex;
+      min-height: 42px;
+      align-items: center;
+      gap: 12px;
+      padding: 0 11px;
+      border: 0;
+      border-radius: 11px;
+      color: #777f90;
+      background: transparent;
+      cursor: pointer;
+      text-align: left;
+      transition: color .16s, background .16s;
+    }
+    .nav-item:hover { color: var(--ink); background: #f7f7fb; }
+    .nav-item.active { color: var(--purple); background: var(--purple-light); font-weight: 700; }
+    .nav-icon { width: 19px; font-size: 17px; text-align: center; }
+    .nav-count { margin-left: auto; color: #9a9eaa; font-size: 11px; }
+    .sidebar-bottom { margin-top: auto; }
+    .note-card { padding: 15px; border: 1px solid #eeecff; border-radius: 15px; background: linear-gradient(145deg, #f7f6ff, #fff); }
+    .note-card strong { display: block; margin-bottom: 6px; font-size: 12px; }
+    .note-card p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.55; }
+    .main { min-height: 100vh; margin-left: 228px; padding: 0 42px 48px; }
+    .topbar { display: flex; height: 76px; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
+    .crumb { color: var(--muted); font-size: 12px; }
+    .top-actions { display: flex; align-items: center; gap: 10px; }
+    .date-pill { color: #656c7c; font-size: 12px; }
+    .install-button, .avatar {
+      display: grid;
+      width: 36px;
+      height: 36px;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--paper);
+      cursor: pointer;
+    }
+    .install-button[hidden] { display: none; }
+    .avatar { border: 0; color: #5448d6; background: #e9e7ff; font-size: 11px; font-weight: 800; }
+    .content { width: min(100%, 850px); margin: 0 auto; }
+    .hero { position: relative; overflow: hidden; margin: 28px 0 24px; padding: 29px 32px; border-radius: 21px; color: white; background: linear-gradient(112deg, #6456e8 0%, #7868ed 55%, #9285f4 100%); box-shadow: 0 13px 30px rgba(101, 88, 232, .18); }
+    .hero::after { position: absolute; top: -83px; right: 39px; width: 245px; height: 245px; border: 1px solid rgba(255,255,255,.16); border-radius: 50%; box-shadow: 0 0 0 27px rgba(255,255,255,.045), 0 0 0 56px rgba(255,255,255,.035); content: ""; }
+    .eyebrow { position: relative; z-index: 1; display: flex; align-items: center; gap: 7px; margin-bottom: 13px; color: rgba(255,255,255,.79); font-size: 10px; font-weight: 750; letter-spacing: .13em; text-transform: uppercase; }
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #a9f2cf; box-shadow: 0 0 0 4px rgba(169,242,207,.16); }
+    .hero h1 { position: relative; z-index: 1; max-width: 500px; margin: 0; font-size: clamp(25px, 4vw, 34px); font-weight: 760; letter-spacing: -.055em; line-height: 1.12; }
+    .hero p { position: relative; z-index: 1; max-width: 470px; margin: 10px 0 0; color: rgba(255,255,255,.8); font-size: 13px; line-height: 1.6; }
+    .hero-meta { position: relative; z-index: 1; display: flex; align-items: center; gap: 9px; margin-top: 20px; font-size: 11px; }
+    .avatar-stack { display: flex; padding-left: 2px; }
+    .avatar-stack span { display: grid; width: 22px; height: 22px; margin-left: -3px; place-items: center; border: 2px solid #7669eb; border-radius: 50%; color: #5448d6; background: #fff; font-size: 8px; font-weight: 800; }
+    .hero-meta strong { color: white; }
+    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 19px; }
+    .search { display: flex; min-width: 200px; height: 42px; flex: 1; align-items: center; gap: 9px; padding: 0 13px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); }
+    .search svg { width: 17px; height: 17px; flex: 0 0 auto; color: #a0a5b2; }
+    .search input { width: 100%; min-width: 0; border: 0; outline: 0; color: var(--ink); background: transparent; font-size: 12px; }
+    .search input::placeholder { color: #a0a5b2; }
+    .search:focus-within { border-color: #aaa2f3; box-shadow: 0 0 0 3px rgba(101,88,232,.08); }
+    .sort-select { height: 42px; padding: 0 30px 0 12px; border: 1px solid var(--line); border-radius: 12px; color: #555d6e; background: var(--paper); font-size: 11px; }
+    .filters { display: flex; gap: 7px; overflow-x: auto; margin-bottom: 24px; padding-bottom: 2px; scrollbar-width: none; }
+    .filters::-webkit-scrollbar { display: none; }
+    .filter {
+      min-height: 32px;
+      padding: 0 13px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      color: #767d8d;
+      background: var(--paper);
+      cursor: pointer;
+      font-size: 11px;
+      white-space: nowrap;
+      transition: .16s ease;
+    }
+    .filter:hover { border-color: #d0ccff; color: var(--purple); }
+    .filter.active { border-color: var(--purple); color: #fff; background: var(--purple); }
+    .section-heading { display: flex; align-items: baseline; justify-content: space-between; margin: 0 0 12px; }
+    .section-heading h2 { margin: 0; font-size: 16px; font-weight: 760; letter-spacing: -.035em; }
+    .section-heading span { color: var(--muted); font-size: 11px; }
+    .featured {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 210px;
+      min-height: 195px;
+      overflow: hidden;
+      margin-bottom: 28px;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+    }
+    .featured-copy { padding: 21px 23px; }
+    .featured-art { display: grid; min-height: 100%; place-items: center; background: linear-gradient(135deg, #e9e7ff, #d9d5ff); }
+    .featured-art .art-orbit { display: grid; width: 114px; height: 114px; place-items: center; border: 1px solid rgba(101,88,232,.22); border-radius: 50%; box-shadow: 0 0 0 15px rgba(255,255,255,.28), 0 0 0 31px rgba(255,255,255,.2); }
+    .art-glyph { display: grid; width: 62px; height: 62px; place-items: center; border-radius: 20px; color: white; background: #6255df; box-shadow: 0 10px 24px rgba(75,65,193,.28); font-size: 26px; font-weight: 800; }
+    .badge { display: inline-flex; align-items: center; gap: 5px; padding: 5px 8px; border-radius: 20px; color: #6558d9; background: var(--purple-light); font-size: 9px; font-weight: 750; letter-spacing: .04em; text-transform: uppercase; }
+    .feature-title { margin: 11px 0 5px; font-size: 19px; font-weight: 770; letter-spacing: -.04em; }
+    .feature-description { max-width: 500px; margin: 0; color: #72798a; font-size: 12px; line-height: 1.6; }
+    .feature-bottom { display: flex; align-items: center; gap: 12px; margin-top: 17px; }
+    .feature-category { color: var(--muted); font-size: 10px; }
+    .detail-button { margin-left: auto; padding: 8px 12px; border: 0; border-radius: 9px; color: white; background: var(--ink); cursor: pointer; font-size: 10px; font-weight: 650; }
+    .tool-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .tool-card { min-width: 0; padding: 16px; border: 1px solid var(--line); border-radius: 15px; background: var(--paper); transition: transform .18s ease, box-shadow .18s ease; }
+    .tool-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+    .tool-top { display: flex; align-items: flex-start; gap: 11px; }
+    .tool-logo { display: grid; width: 39px; height: 39px; flex: 0 0 auto; place-items: center; border-radius: 12px; color: var(--logo-color, #6558e8); background: var(--logo-bg, #f0efff); font-size: 17px; font-weight: 800; }
+    .tool-main { min-width: 0; flex: 1; }
+    .tool-title-line { display: flex; align-items: center; gap: 6px; }
+    .tool-title { overflow: hidden; margin: 1px 0 4px; font-size: 13px; font-weight: 750; letter-spacing: -.02em; text-overflow: ellipsis; white-space: nowrap; }
+    .fresh { color: #319474; font-size: 9px; font-weight: 700; }
+    .tool-category { color: var(--muted); font-size: 10px; }
+    .save-button { display: grid; width: 28px; height: 28px; flex: 0 0 auto; place-items: center; border: 0; border-radius: 8px; color: #9ba1ad; background: transparent; cursor: pointer; font-size: 16px; }
+    .save-button:hover, .save-button.saved { color: #6558e8; background: #f2f0ff; }
+    .tool-description { min-height: 36px; margin: 13px 0 14px; color: #737b8c; font-size: 11px; line-height: 1.6; }
+    .tool-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-top: 11px; border-top: 1px solid #f0f1f5; }
+    .tool-date { color: #999fad; font-size: 9px; }
+    .tag { padding: 5px 8px; border-radius: 7px; color: #656d7d; background: #f6f7fa; font-size: 9px; font-weight: 650; }
+    .empty { grid-column: 1 / -1; padding: 38px 16px; border: 1px dashed #dfe1eb; border-radius: 15px; color: var(--muted); text-align: center; }
+    .empty strong { display: block; margin-bottom: 5px; color: var(--ink); }
+    .footnote { margin: 24px 0 0; color: #a0a5b1; font-size: 10px; line-height: 1.6; text-align: center; }
+    dialog { width: min(440px, calc(100% - 32px)); padding: 0; border: 1px solid var(--line); border-radius: 18px; color: var(--ink); background: var(--paper); box-shadow: 0 25px 80px rgba(22,28,48,.22); }
+    dialog::backdrop { background: rgba(24,28,42,.38); backdrop-filter: blur(3px); }
+    .dialog-inner { padding: 23px; }
+    .dialog-header { display: flex; align-items: flex-start; gap: 12px; }
+    .dialog-header .tool-logo { width: 46px; height: 46px; }
+    .dialog-title { margin: 1px 0 4px; font-size: 19px; letter-spacing: -.04em; }
+    .dialog-close { margin-left: auto; border: 0; color: var(--muted); background: transparent; cursor: pointer; font-size: 22px; }
+    .dialog-description { margin: 19px 0; color: #6f7789; font-size: 13px; line-height: 1.7; }
+    .dialog-meta { display: flex; flex-wrap: wrap; gap: 7px; }
+    .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 22px; }
+    .dialog-actions button { min-height: 37px; padding: 0 13px; border: 1px solid var(--line); border-radius: 9px; background: white; cursor: pointer; font-size: 11px; font-weight: 650; }
+    .dialog-actions .primary { border-color: var(--purple); color: white; background: var(--purple); }
+    .toast { position: fixed; z-index: 10; right: 20px; bottom: 20px; max-width: calc(100% - 40px); padding: 11px 15px; border-radius: 11px; color: #fff; background: #252a3b; box-shadow: var(--shadow); font-size: 11px; opacity: 0; pointer-events: none; transform: translateY(8px); transition: .2s ease; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .mobile-nav { display: none; }
+    @media (max-width: 800px) {
+      .sidebar { width: 188px; padding-inline: 13px; }
+      .main { margin-left: 188px; padding-inline: 25px; }
+      .featured { grid-template-columns: minmax(0, 1fr) 165px; }
+    }
+    @media (max-width: 620px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 0 17px calc(78px + env(safe-area-inset-bottom, 0px)); }
+      .topbar { height: 60px; }
+      .crumb { font-weight: 650; }
+      .date-pill { font-size: 10px; }
+      .hero { margin: 19px 0 18px; padding: 24px 21px; border-radius: 18px; }
+      .hero::after { right: -115px; }
+      .hero p { max-width: 310px; font-size: 12px; }
+      .toolbar { gap: 8px; }
+      .search { height: 40px; }
+      .sort-select { width: 96px; height: 40px; padding-left: 8px; font-size: 10px; }
+      .filters { margin-right: -17px; }
+      .featured { grid-template-columns: minmax(0, 1fr) 112px; min-height: 184px; }
+      .featured-copy { padding: 16px 15px; }
+      .featured-art .art-orbit { width: 76px; height: 76px; }
+      .art-glyph { width: 47px; height: 47px; border-radius: 15px; font-size: 21px; }
+      .feature-title { font-size: 16px; }
+      .feature-description { font-size: 11px; }
+      .feature-bottom { gap: 6px; margin-top: 12px; }
+      .detail-button { padding: 7px 9px; font-size: 9px; }
+      .tool-grid { grid-template-columns: 1fr; gap: 9px; }
+      .tool-card { padding: 14px; }
+      .tool-description { min-height: 0; margin: 10px 0 12px; }
+      .mobile-nav {
+        position: fixed;
+        z-index: 6;
+        inset: auto 0 0;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        padding: 8px max(12px, env(safe-area-inset-right, 0px)) calc(8px + env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px));
+        border-top: 1px solid var(--line);
+        background: rgba(255,255,255,.95);
+        backdrop-filter: blur(14px);
+      }
+      .mobile-nav .nav-item { min-height: 48px; flex-direction: column; justify-content: center; gap: 2px; padding: 3px; font-size: 9px; }
+      .mobile-nav .nav-icon { font-size: 16px; }
+      .mobile-nav .nav-count { display: none; }
+      .toast { right: 12px; bottom: calc(70px + env(safe-area-inset-bottom, 0px)); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar" aria-label="Main navigation">
+      <a class="brand" href="./" aria-label="Launchpad AI home">
+        <span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3.5 14.4 9.6 20.5 12l-6.1 2.4L12 20.5l-2.4-6.1L3.5 12l6.1-2.4L12 3.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m19 3 .7 2.3L22 6l-2.3.7L19 9l-.7-2.3L16 6l2.3-.7L19 3Z" fill="currentColor"/></svg></span>
+        <span>launchpad<span style="color:var(--purple)">.</span></span>
+      </a>
+      <div class="nav-label">Discover</div>
+      <nav class="nav-list" data-navigation>
+        <button class="nav-item active" type="button" data-view="all"><span class="nav-icon">✦</span>All launches<span class="nav-count" id="all-count"></span></button>
+        <button class="nav-item" type="button" data-view="today"><span class="nav-icon">◷</span>Today</button>
+        <button class="nav-item" type="button" data-view="saved"><span class="nav-icon">♡</span>Saved<span class="nav-count" id="saved-count">0</span></button>
+      </nav>
+      <div class="nav-label">Your space</div>
+      <div class="note-card"><strong>A little AI inspiration</strong><p>Small discoveries can unlock big ideas. Find your next favorite tool right here.</p></div>
+      <div class="sidebar-bottom"><p class="footnote">A curated sample directory.<br>Fresh ideas, every day.</p></div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <span class="crumb" id="crumb">Discover <span style="color:#b7bbc5">/</span> All launches</span>
+        <div class="top-actions"><span class="date-pill" id="today-date"></span><button class="install-button" id="install-button" type="button" aria-label="Install Launchpad AI" title="Install app" hidden>↓</button><span class="avatar" aria-label="Launchpad AI">AI</span></div>
+      </header>
+      <div class="content">
+        <section class="hero" aria-labelledby="hero-title">
+          <div class="eyebrow"><span class="live-dot"></span> YOUR DAILY AI BRIEFING</div>
+          <h1 id="hero-title">A new idea is just<br>one launch away.</h1>
+          <p>Explore clever AI tools, fresh launches, and the little sparks that could change how you work.</p>
+          <div class="hero-meta"><span class="avatar-stack" aria-hidden="true"><span>✦</span><span>AI</span><span>+</span></span><span><strong id="tool-total">0 tools</strong> to spark your next big thing</span></div>
+        </section>
+        <div class="toolbar">
+          <label class="search">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <input id="search-input" type="search" placeholder="Search tools, categories..." autocomplete="off" aria-label="Search AI tools">
+          </label>
+          <label class="sr-only" for="sort-select">Sort launches</label>
+          <select class="sort-select" id="sort-select" aria-label="Sort launches"><option value="newest">Newest first</option><option value="name">A to Z</option></select>
+        </div>
+        <div class="filters" id="filters" aria-label="Filter by category"></div>
+        <section id="featured-section" aria-labelledby="featured-heading">
+          <div class="section-heading"><h2 id="featured-heading">Spotlight</h2><span>Editor's pick</span></div>
+          <article class="featured">
+            <div class="featured-copy">
+              <span class="badge"><span>✦</span> TODAY'S SPOTLIGHT</span>
+              <h3 class="feature-title">Make space for your next idea</h3>
+              <p class="feature-description">Meet the tools helping curious minds create, build, and get more out of every day.</p>
+              <div class="feature-bottom"><span class="feature-category">A handpicked place to start</span><button class="detail-button" type="button" id="spotlight-button">Explore picks <span aria-hidden="true">→</span></button></div>
+            </div>
+            <div class="featured-art" aria-hidden="true"><div class="art-orbit"><span class="art-glyph">✳</span></div></div>
+          </article>
+        </section>
+        <section aria-labelledby="launches-heading">
+          <div class="section-heading"><h2 id="launches-heading">Fresh launches</h2><span id="result-count"></span></div>
+          <div class="tool-grid" id="tool-grid" aria-live="polite"></div>
+        </section>
+        <p class="footnote">Sample listings are for demonstration and discovery. Tool descriptions are illustrative; explore each product independently.</p>
+      </div>
+    </main>
+  </div>
+  <nav class="mobile-nav" aria-label="Main navigation" data-navigation>
+    <button class="nav-item active" type="button" data-view="all"><span class="nav-icon">✦</span>Discover</button>
+    <button class="nav-item" type="button" data-view="today"><span class="nav-icon">◷</span>Today</button>
+    <button class="nav-item" type="button" data-view="saved"><span class="nav-icon">♡</span>Saved<span class="nav-count" id="mobile-saved-count">0</span></button>
+    <button class="nav-item" type="button" data-view="all"><span class="nav-icon">⌕</span>Search</button>
+  </nav>
+  <dialog id="tool-dialog" aria-labelledby="dialog-title">
+    <div class="dialog-inner">
+      <div class="dialog-header"><span class="tool-logo" id="dialog-logo"></span><div><h2 class="dialog-title" id="dialog-title"></h2><span class="tool-category" id="dialog-category"></span></div><button class="dialog-close" id="dialog-close" type="button" aria-label="Close dialog">×</button></div>
+      <p class="dialog-description" id="dialog-description"></p>
+      <div class="dialog-meta"><span class="tag" id="dialog-date"></span><span class="tag" id="dialog-tag"></span></div>
+      <div class="dialog-actions"><button id="dialog-save" type="button">Save tool</button><button class="primary" id="dialog-done" type="button">Done</button></div>
+    </div>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script>
+    "use strict";
+
+    const tools = [
+      { id: "notely", name: "Notely AI", category: "Productivity", icon: "N", color: "#5c50d9", bg: "#efedff", description: "Turn scattered notes and voice memos into clear, useful summaries and next steps.", tag: "Writing", age: 0 },
+      { id: "pixelcraft", name: "PixelCraft", category: "Design", icon: "✳", color: "#d45a87", bg: "#fff0f5", description: "Explore visual directions and shape your early design ideas with a little help from AI.", tag: "Creative", age: 0 },
+      { id: "querynest", name: "QueryNest", category: "Research", icon: "⌕", color: "#338777", bg: "#e8f7f3", description: "Gather research notes into a tidy workspace built for following your curiosity.", tag: "Discovery", age: 1 },
+      { id: "flowpilot", name: "FlowPilot", category: "Productivity", icon: "↗", color: "#bb7537", bg: "#fff3e7", description: "Sketch a workflow in plain language and map out the steps that keep work moving.", tag: "Workflow", age: 1 },
+      { id: "soundloom", name: "Soundloom", category: "Audio", icon: "♫", color: "#7257ca", bg: "#f0edff", description: "A playful sound studio for composing short music ideas from a mood or a moment.", tag: "Music", age: 2 },
+      { id: "codegrove", name: "CodeGrove", category: "Development", icon: "</>", color: "#3c7a55", bg: "#ebf6ee", description: "Grow a small code prototype from a prompt, then refine each piece as you go.", tag: "Building", age: 2 },
+      { id: "storyspark", name: "StorySpark", category: "Writing", icon: "✎", color: "#c2524f", bg: "#fff0ee", description: "Find a starting point, shape an outline, and keep your writing momentum going.", tag: "Ideas", age: 3 },
+      { id: "framewise", name: "Framewise", category: "Video", icon: "▶", color: "#3574a8", bg: "#eaf4ff", description: "Arrange a rough video concept into a scene-by-scene plan ready for your next edit.", tag: "Creator", age: 4 }
+    ];
+    const categories = ["All tools", "Productivity", "Design", "Research", "Audio", "Development", "Writing", "Video"];
+    const $ = (id) => document.getElementById(id);
+    let activeCategory = "All tools";
+    let activeView = "all";
+    let sortOrder = "newest";
+    let currentDialogTool = null;
+    let toastTimer;
+    let saved = readSaved();
+    let installPrompt = null;
+
+    function readSaved() {
+      try {
+        const value = JSON.parse(localStorage.getItem("launchpad-saved") || "[]");
+        return Array.isArray(value) ? value.filter((id) => tools.some((tool) => tool.id === id)) : [];
+      } catch (error) {
+        console.warn("Saved tools are unavailable:", error);
+        return [];
+      }
+    }
+
+    function saveSaved() {
+      try {
+        localStorage.setItem("launchpad-saved", JSON.stringify(saved));
+      } catch (error) {
+        console.warn("Could not save your tools:", error);
+        showToast("Could not save on this device.");
+      }
+    }
+
+    function formatDate(age) {
+      if (age === 0) return "Today";
+      if (age === 1) return "Yesterday";
+      return `${age} days ago`;
+    }
+
+    function renderFilters() {
+      $("filters").innerHTML = categories.map((category) =>
+        `<button class="filter${activeCategory === category ? " active" : ""}" type="button" data-category="${category}">${category}</button>`
+      ).join("");
+    }
+
+    function visibleTools() {
+      const query = $("search-input").value.trim().toLowerCase();
+      let result = tools.filter((tool) => {
+        const matchesCategory = activeCategory === "All tools" || tool.category === activeCategory;
+        const matchesView = activeView === "saved" ? saved.includes(tool.id) : activeView === "today" ? tool.age === 0 : true;
+        const matchesQuery = !query || `${tool.name} ${tool.category} ${tool.description} ${tool.tag}`.toLowerCase().includes(query);
+        return matchesCategory && matchesView && matchesQuery;
+      });
+      if (sortOrder === "name") result = result.slice().sort((a, b) => a.name.localeCompare(b.name));
+      else result = result.slice().sort((a, b) => a.age - b.age);
+      return result;
+    }
+
+    function renderTools() {
+      const result = visibleTools();
+      $("result-count").textContent = `${result.length} ${result.length === 1 ? "tool" : "tools"}`;
+      $("tool-grid").innerHTML = result.length
+        ? result.map((tool) => `<article class="tool-card">
+            <div class="tool-top">
+              <span class="tool-logo" style="--logo-color:${tool.color};--logo-bg:${tool.bg}" aria-hidden="true">${tool.icon}</span>
+              <div class="tool-main"><div class="tool-title-line"><h3 class="tool-title">${tool.name}</h3>${tool.age === 0 ? '<span class="fresh">NEW</span>' : ""}</div><span class="tool-category">${tool.category}</span></div>
+              <button class="save-button${saved.includes(tool.id) ? " saved" : ""}" type="button" data-save="${tool.id}" aria-label="${saved.includes(tool.id) ? "Remove " + tool.name + " from saved tools" : "Save " + tool.name}" aria-pressed="${saved.includes(tool.id)}">${saved.includes(tool.id) ? "♥" : "♡"}</button>
+            </div>
+            <p class="tool-description">${tool.description}</p>
+            <div class="tool-foot"><span class="tool-date">${formatDate(tool.age)}</span><span class="tag">${tool.tag}</span></div>
+            <button class="sr-only" type="button" data-open="${tool.id}">View ${tool.name} details</button>
+          </article>`).join("")
+        : '<div class="empty"><strong>No launches found</strong>Try another search or category.</div>';
+      updateCounts();
+    }
+
+    function updateCounts() {
+      $("saved-count").textContent = saved.length;
+      $("mobile-saved-count").textContent = saved.length;
+      $("all-count").textContent = tools.length;
+      $("tool-total").textContent = `${tools.length} tools`;
+      document.querySelectorAll("[data-view]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.view === activeView);
+      });
+      const labels = { all: "All launches", today: "Today", saved: "Saved tools" };
+      $("crumb").innerHTML = `Discover <span style="color:#b7bbc5">/</span> ${labels[activeView]}`;
+      $("launches-heading").textContent = activeView === "today" ? "Today's launches" : activeView === "saved" ? "Your saved tools" : "Fresh launches";
+      $("featured-section").hidden = activeView !== "all" || Boolean($("search-input").value) || activeCategory !== "All tools";
+    }
+
+    function showToast(message) {
+      const toast = $("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 2200);
+    }
+
+    function toggleSaved(id) {
+      const tool = tools.find((item) => item.id === id);
+      if (!tool) return;
+      if (saved.includes(id)) {
+        saved = saved.filter((item) => item !== id);
+        showToast(`${tool.name} removed from saved.`);
+      } else {
+        saved.push(id);
+        showToast(`${tool.name} saved for later.`);
+      }
+      saveSaved();
+      renderTools();
+      if (currentDialogTool?.id === id) updateDialogSave();
+    }
+
+    function openTool(id) {
+      const tool = tools.find((item) => item.id === id);
+      if (!tool) return;
+      currentDialogTool = tool;
+      $("dialog-logo").textContent = tool.icon;
+      $("dialog-logo").style.setProperty("--logo-color", tool.color);
+      $("dialog-logo").style.setProperty("--logo-bg", tool.bg);
+      $("dialog-title").textContent = tool.name;
+      $("dialog-category").textContent = tool.category;
+      $("dialog-description").textContent = tool.description;
+      $("dialog-date").textContent = `Added ${formatDate(tool.age)}`;
+      $("dialog-tag").textContent = tool.tag;
+      updateDialogSave();
+      $("tool-dialog").showModal();
+    }
+
+    function updateDialogSave() {
+      if (!currentDialogTool) return;
+      $("dialog-save").textContent = saved.includes(currentDialogTool.id) ? "Remove saved tool" : "Save tool";
+    }
+
+    $("filters").addEventListener("click", (event) => {
+      const button = event.target.closest("[data-category]");
+      if (!button) return;
+      activeCategory = button.dataset.category;
+      renderFilters();
+      renderTools();
+    });
+    document.querySelectorAll("[data-navigation]").forEach((navigation) => {
+      navigation.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-view]");
+        if (!button) return;
+        activeView = button.dataset.view;
+        if (button.textContent.includes("Search")) $("search-input").focus();
+        renderTools();
+      });
+    });
+    $("tool-grid").addEventListener("click", (event) => {
+      const saveButton = event.target.closest("[data-save]");
+      if (saveButton) { toggleSaved(saveButton.dataset.save); return; }
+      const card = event.target.closest(".tool-card");
+      if (card) {
+        const title = card.querySelector(".tool-title")?.textContent;
+        const tool = tools.find((item) => item.name === title);
+        if (tool) openTool(tool.id);
+      }
+    });
+    $("search-input").addEventListener("input", renderTools);
+    $("sort-select").addEventListener("change", (event) => { sortOrder = event.target.value; renderTools(); });
+    $("spotlight-button").addEventListener("click", () => {
+      activeView = "all";
+      activeCategory = "All tools";
+      $("search-input").value = "";
+      renderFilters();
+      renderTools();
+      document.querySelector("#launches-heading").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    $("dialog-close").addEventListener("click", () => $("tool-dialog").close());
+    $("dialog-done").addEventListener("click", () => $("tool-dialog").close());
+    $("dialog-save").addEventListener("click", () => currentDialogTool && toggleSaved(currentDialogTool.id));
+    $("tool-dialog").addEventListener("click", (event) => {
+      if (event.target === $("tool-dialog")) $("tool-dialog").close();
+    });
+    $("today-date").textContent = new Intl.DateTimeFormat(undefined, { weekday: "short", month: "short", day: "numeric" }).format(new Date());
+    renderFilters();
+    renderTools();
+
+    window.addEventListener("beforeinstallprompt", (event) => {
+      event.preventDefault();
+      installPrompt = event;
+      $("install-button").hidden = false;
+    });
+    $("install-button").addEventListener("click", async () => {
+      if (!installPrompt) return;
+      installPrompt.prompt();
+      await installPrompt.userChoice;
+      installPrompt = null;
+      $("install-button").hidden = true;
+    });
+    window.addEventListener("appinstalled", () => { $("install-button").hidden = true; });
+    if ("serviceWorker" in navigator && location.protocol === "https:") {
+      navigator.serviceWorker.register("./sw.js").catch((error) => console.warn("Could not register offline app:", error));
+    }
+  </script>
+</body>
+</html>

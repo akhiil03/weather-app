@@ -1,0 +1,21 @@
+{
+  "id": "./",
+  "name": "Launchpad AI",
+  "short_name": "Launchpad",
+  "description": "A fresh, curated directory of AI tools and launches.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
+  "background_color": "#f7f8fc",
+  "theme_color": "#f7f8fc",
+  "categories": ["productivity", "utilities", "education"],
+  "icons": [
+    {
+      "src": "./icons/launchpad.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
