@@ -28,11 +28,7 @@ jobs:
       - name: Upload weather app
         uses: actions/upload-pages-artifact@v3
         with:
-          path: |
-            index.html
-            manifest.webmanifest
-            sw.js
-            icons/
+          path: .
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
