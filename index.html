@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f4f7fb">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Daylight Weather">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./icons/icon-192.png">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23fff2dc'/%3E%3Ccircle cx='32' cy='32' r='11' fill='%23eea844'/%3E%3Cg stroke='%23b97618' stroke-width='4' stroke-linecap='round'%3E%3Cpath d='M32 8v7m0 34v7M8 32h7m34 0h7M15 15l5 5m24 24 5 5m0-34-5 5M20 44l-5 5'/%3E%3C/g%3E%3C/svg%3E">
@@ -33,6 +34,7 @@
     body {
       min-width: 320px;
       min-height: 100vh;
+      min-height: 100dvh;
       margin: 0;
       padding: 44px 20px 36px;
       color: var(--text);
@@ -349,8 +351,24 @@
       clip-path: inset(50%);
     }
 
+    @media (max-width: 600px) {
+      body {
+        padding:
+          calc(22px + env(safe-area-inset-top, 0px))
+          max(16px, env(safe-area-inset-right, 0px))
+          calc(22px + env(safe-area-inset-bottom, 0px))
+          max(16px, env(safe-area-inset-left, 0px));
+      }
+    }
+
     @media (max-width: 370px) {
-      body { padding: 27px 13px; }
+      body {
+        padding:
+          calc(18px + env(safe-area-inset-top, 0px))
+          max(13px, env(safe-area-inset-right, 0px))
+          calc(18px + env(safe-area-inset-bottom, 0px))
+          max(13px, env(safe-area-inset-left, 0px));
+      }
       .today-label { display: none; }
       .current-card { padding: 21px 20px; }
       .weather-visual { margin-right: 2px; font-size: 65px; }
