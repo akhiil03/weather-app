@@ -700,7 +700,7 @@
       $("location").textContent = [place.name, place.country].filter(Boolean).join(", ");
       $("temperature").innerHTML = `${Math.round(current.temperature_2m)}<sup>°</sup>`;
       $("condition").textContent = info.label;
-      $("weather-visual").textContent = info.icon;
+      $("weather-visual").textContent = current.is_day === 1 ? "☀" : "☾";
       $("feels-like").textContent = `Feels like ${Math.round(current.apparent_temperature)}°`;
       $("wind").textContent = `${Math.round(current.wind_speed_10m)} km/h`;
       $("humidity").textContent = `${Math.round(current.relative_humidity_2m)}%`;
