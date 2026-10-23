@@ -4,6 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f4f7fb">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Daylight Weather">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23fff2dc'/%3E%3Ccircle cx='32' cy='32' r='11' fill='%23eea844'/%3E%3Cg stroke='%23b97618' stroke-width='4' stroke-linecap='round'%3E%3Cpath d='M32 8v7m0 34v7M8 32h7m34 0h7M15 15l5 5m24 24 5 5m0-34-5 5M20 44l-5 5'/%3E%3C/g%3E%3C/svg%3E">
   <title>Weather — Mumbai</title>
   <style>
@@ -99,6 +103,26 @@
       font-size: 13px;
       font-weight: 550;
     }
+
+    .install-button {
+      display: inline-flex;
+      flex: 0 0 auto;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 36px;
+      padding: 0 11px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      color: var(--text);
+      background: var(--surface-solid);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 650;
+    }
+    .install-button:hover { border-color: var(--accent); }
+    .install-button:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 55%, white); outline-offset: 2px; }
+    .install-button[hidden] { display: none; }
 
     .search {
       display: flex;
@@ -327,6 +351,7 @@
 
     @media (max-width: 370px) {
       body { padding: 27px 13px; }
+      .today-label { display: none; }
       .current-card { padding: 21px 20px; }
       .weather-visual { margin-right: 2px; font-size: 65px; }
       .forecast { gap: 5px; }
@@ -373,6 +398,7 @@
     <header class="topbar">
       <div class="brand"><span class="brand-mark" aria-hidden="true">◉</span><span>daylight</span></div>
       <span class="today-label" id="today-label"></span>
+      <button class="install-button" id="install-button" type="button" aria-label="Install or add this weather app to your home screen"><span aria-hidden="true">↓</span>Install</button>
     </header>
 
     <form class="search" id="search-form" role="search">
@@ -437,6 +463,50 @@
     };
 
     const $ = (id) => document.getElementById(id);
+    let pendingInstallPrompt = null;
+
+    function showInstallMessage(text) {
+      $("message").className = "message";
+      $("message").textContent = text;
+    }
+
+    window.addEventListener("beforeinstallprompt", (event) => {
+      event.preventDefault();
+      pendingInstallPrompt = event;
+    });
+
+    window.addEventListener("appinstalled", () => {
+      pendingInstallPrompt = null;
+      $("install-button").hidden = true;
+      showInstallMessage("Daylight Weather was added to your home screen.");
+    });
+
+    $("install-button").addEventListener("click", async () => {
+      if (pendingInstallPrompt) {
+        const prompt = pendingInstallPrompt;
+        pendingInstallPrompt = null;
+        try {
+          await prompt.prompt();
+          const choice = await prompt.userChoice;
+          showInstallMessage(choice.outcome === "accepted" ? "Daylight Weather was added to your home screen." : "Installation was cancelled.");
+        } catch (error) {
+          console.warn("Could not open the install prompt:", error);
+          showInstallMessage("Use your browser menu to install or add this app to your home screen.");
+        }
+        return;
+      }
+
+      const isAppleMobile = /iPad|iPhone|iPod/.test(navigator.userAgent)
+        || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+      showInstallMessage(isAppleMobile
+        ? "To install: tap Share, then choose “Add to Home Screen”."
+        : "Open your browser menu and choose “Install app” or “Add to Home screen”.");
+    });
+
+    if (window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true) {
+      $("install-button").hidden = true;
+    }
+
     const weatherInfo = (code, isDay = true) => {
       if (code === 0) return { label: "Clear sky", icon: isDay ? "☀" : "☾", theme: "sun" };
       if (code === 1) return { label: "Mostly clear", icon: isDay ? "🌤" : "☾", theme: "sun" };
@@ -561,6 +631,12 @@
     $("today-label").textContent = new Intl.DateTimeFormat(undefined, { weekday: "long", month: "long", day: "numeric" }).format(new Date());
     render(fallback, DEFAULT_CITY, true);
     load(DEFAULT_CITY, true);
+
+    if ("serviceWorker" in navigator && location.protocol === "https:") {
+      navigator.serviceWorker.register("./sw.js").catch((error) => {
+        console.warn("Could not register the offline app service worker:", error);
+      });
+    }
   </script>
 </body>
 </html>
